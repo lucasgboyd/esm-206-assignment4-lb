@@ -1,0 +1,15 @@
+---
+title: "Juvenile snowshoe hares in Bonanza Creek Experimental Forest"
+author: "Lucas Boyd"
+date: "11/4/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, code = FALSE)
+# attach packages
+library(here)
+library(janitor)
+library(tidyverse)
+```
+
