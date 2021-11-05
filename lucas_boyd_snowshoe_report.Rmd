@@ -6,10 +6,149 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, code = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 # attach packages
 library(here)
 library(janitor)
 library(tidyverse)
+library(lubridate)
+library(kableExtra)
+library(effsize)
+library(broom)
+library(equatiomatic)
 ```
+
+## 1. Introduction and Overview
+
+****Insert 4-5 sentences of introduction
+
+## 2. Data and Analyses
+
+****3-4 sentences of describing the data + citation
+
+```{r}
+hares <- read_csv(here("data", "bonanza_hares.csv")) %>% # read in
+  clean_names() %>% # cleaning names
+  mutate(date = mdy(date)) %>% # converting date format
+  mutate(year = year(date)) # creating a new year column
+```
+
+### Juvenile hare trap counts
+
+```{r}
+hares_by_year <- hares %>% 
+  count(year) # creating a subset for hare totals by year to explore the data
+hares_by_year_mean <- mean(hares_by_year$n) # storing summary statistics
+hares_by_year_max <- max(hares_by_year$n)
+hares_by_year_min <- min(hares_by_year$n)
+```
+
+```{r}
+ggplot(data = hares_by_year, aes(x = year, y = n)) + 
+  geom_col() + # creating a bar graph of trap counts
+  labs(x = "Year", y = "Total Trappings") #updating labels
+```
+****add a figure caption below the graph
+****sexy up this graph, including removing the weird empty bar
+****Insert 3-4 sentences describing key takeaways and doing inline code for numbers
+
+
+### Visualize juvenile hare weights
+
+```{r}
+# group and summarize the data for use in the visual
+hares_weight_by_site_summary <- hares %>% 
+  group_by(sex, grid) %>% 
+  summarize(
+    mean_weight = mean(weight, na.rm = TRUE))
+```
+
+
+```{r}
+# visualizing average hare weight by site and sex
+ggplot(data = hares_weight_by_site_summary, aes(x = sex, y = mean_weight, fill = sex)) +
+  geom_col() +
+  facet_wrap(~ grid) + 
+  labs(x = "Sex", y = "Weight (g)")
+```
+****add a figure caption below the graph
+****sexy up this graph, including making the site names and such capital
+****2-3 sentences describing main takeaways for my visual
+
+### Juvenile hare weights comparison
+
+```{r}
+hares_sex_table <- hares %>% 
+  filter(sex %in% c("m", "f")) %>% # filtering out unspecified sexes
+  group_by(sex) %>% # grouping by sex
+  summarize( # finding summary statistics 
+    mean_weight = round(mean(weight, na.rm = TRUE), 2), 
+    sd_weight = round(sd(weight, na.rm = TRUE), 2), 
+    sample_size = n())
+
+hares_sex_table %>% # creating a stylized table with the summary results
+  kable(col.names = c("Sex", 
+                      "Mean Weight (g)", 
+                      "Standard Deviation (g)", 
+                      "Sample Size")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+
+hares_sex_table
+```
+
+**** add a title to this table above it 
+
+```{r}
+# storing vectors of male and female weights to use in t test
+
+weight_male <- hares %>% # storing male weights
+  filter(sex == "m") %>% 
+  pull(weight)
+
+weight_female <- hares %>% # storing female weights
+  filter(sex == "f") %>% 
+  pull(weight)
+
+# exploratory plots to check out the data
+hist(weight_female) # normally distributed, slightly negatively skewed
+hist(weight_male) # also decently normal w/ negative skew
+qqnorm(weight_female) # mostly linear
+qqnorm(weight_male) # relatively linear
+
+# running a t.test of the weights
+weight_by_sex_t <- t.test(weight_male, weight_female)
+
+# finding and storing the actual difference in means
+sex_weight_mean_difference = mean(weight_by_sex_t$estimate[2]) - 
+  mean(weight_by_sex_t$estimate[1])
+
+# finding and storing the effect size
+sex_weight_effect_size <- cohen.d(weight_male, weight_female, na.rm = TRUE)
+```
+
+****2-3 sentences explaining what the stats deal is, using inline code references
+
+### Relationship between juvenile weight and hind foot length
+
+```{r}
+# creating a visual of weight vs. hind foot length
+ggplot(data = hares, aes(x = hindft, y = weight)) +
+  geom_jitter() +
+  labs(x = "Hind Foot Length (mm)", y = "Juvenile Hare Weight (g)")
+```
+****add figure caption
+****sexy up the graph
+
+```{r}
+# linear regression
+
+hindft_weight_lm <- lm(weight ~ hindft, data = hares)
+
+# tidy data frame of linear regression outputs
+hindft_weight_lm_tidy <- tidy(hindft_weight_lm) 
+
+# making it report-ready with equatiomatic
+
+```
+
 
