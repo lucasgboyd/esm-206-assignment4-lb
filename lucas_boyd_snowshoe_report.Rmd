@@ -42,7 +42,7 @@ hares <- read_csv(here("data", "bonanza_hares.csv")) %>%
 
 ## 3. Preliminary Results
 
-#### A. Annual observations of juvenile hares
+### A. Annual observations of juvenile hares
 
 ```{r}
 hares_by_year <- hares %>% 
@@ -176,9 +176,10 @@ According to the results, juvenile male snowshoe hares (mean weight =
 `r round(mean(weight_male), 0)` +/- `r round(male_sd, 0)`g) weigh
 `r round(sex_weight_mean_difference, 0)`g more
 (`r round((sex_weight_mean_difference)/(mean(weight_male)+mean(weight_female)/2)*100, 2)`%)
-than females (mean weight = `r round(mean(weight_female), 0)` +/- `r round(female_sd, 0)`g). This
-difference was determined to be significant (Welch's two sample t-test:
-t( `r round(weight_by_sex_t$parameter, 3)`) =
+than females (mean weight = `r round(mean(weight_female), 0)` +/-
+`r round(female_sd, 0)`g). This difference was determined to be
+significant (Welch's two sample t-test: t(
+`r round(weight_by_sex_t$parameter, 3)`) =
 `r round(weight_by_sex_t$statistic, 3)`, p =
 `r round(weight_by_sex_t$p.value, 3)`), and the effect size is
 small-moderate (cohens d =
@@ -189,12 +190,14 @@ small-moderate (cohens d =
 ```{r}
 # creating a visual of weight vs. hind foot length
 ggplot(data = hares, aes(x = hindft, y = weight)) +
-  geom_jitter(color = "cyan4") +
+  geom_jitter(color = "cyan4", size = 1.5) +
   labs(x = "Hind Foot Length (mm)", y = "Weight (g)") +
   theme_grey()
 ```
 
-\*\*\*\*add figure caption \*\*\*\*sexy up the graph
+**Fig. 3** examines the relationship between hind foot length (mm) and
+weight (g) in juvenile snowshoe hares, seeming to indicate a positive
+correlation between the two variables.
 
 ```{r}
 # linear regression
@@ -204,8 +207,11 @@ hindft_weight_lm <- lm(weight ~ hindft, data = hares)
 # tidy data frame of linear regression outputs
 hindft_weight_lm_tidy <- tidy(hindft_weight_lm) 
 
+# getting model-wide measures of uncertainty
+lm_glance <- glance(hindft_weight_lm)
+
 # making it report-ready with equatiomatic
-hindft_weight_lm_eq <- extract_eq(model = hindft_weight_lm)
+hindft_weight_lm_eq <- extract_eq(model = hindft_weight_lm, use_coefs = TRUE)
 
 # finding pearson's R for this relationship
 pearsons_r <- cor.test(hares$hindft, hares$weight)
@@ -218,11 +224,56 @@ plot(hindft_weight_lm)
 
 ```
 
-\*\*\*\*2-3 sentences on what's up with the lm \#\# 5. Summary \#\# 5.
-Summary \#\# 6. Citations
+The relationship between hind feet length and weight appears relatively
+linear in juvenile snowshoe hares. A simple linear regression model
+revealed that hind feet length significantly predicts weight (R^2^=
+`r round(lm_glance$adj.r.squared[1], 2)`, p \<0.001), with an average
+slope of `r round(hindft_weight_lm_tidy$estimate[2], 2)`. This means
+that for every millimeter increase in hind foot length, we expect an
+average weight increase of
+`r round(hindft_weight_lm_tidy$estimate[2], 2)`g. Furthermore, hind feet
+length and weight are positively correlated (Pearson's R =
+`r round(pearsons_r$estimate, 2)`, p \< 0.001). The resulting linear
+regression equation is as follows: `r hindft_weight_lm_eq`
 
-Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017.
-Snowshoe hare physical data in Bonanza Creek Experimental Forest:
-1999-Present ver 22. Environmental Data Initiative.
+The R^2^ value is small (`r round(lm_glance$adj.r.squared[1], 2)`), so
+the linear regression model is only moderately adept at predicting
+weight from hind foot length. Additionally, based on the exploratory
+plots, the data appears to be heteroscedastic, with a greater variance
+in data as hind foot length increases. For this reason, I would not rely
+on a linear regression model along to represent the relationship between
+hind foot length and weight in juvenile snowshoe hares.
+
+## 5. Summary
+
+Our preliminary results reveal the following:
+
+-   Total number of observations of snowshoe hares varies greatly year
+    to year and appears to be declining. However, this could be
+    explained by inconsistent data collection.
+
+-   Juvenile male snowshoe hares tend to weigh more on average than
+    females
+
+-   There appears to be a moderate positive correlation between juvenile
+    snowshoe hare hind foot length and weight
+
+Next Steps:
+
+-   Compare the relationship between hind foot length and weight in the
+    entire population of snowshoe hares, to see if there is more
+    evidence of a positive correlation
+
+-   Apply multiple linear regression to model relationships between
+    weight, sex, site, and age
+
+-   Compare observation statistics with data collection behaviors to
+    better understand juvenile hare population trends
+
+## 6. Citations
+
+**Data Citation:** Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza
+Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek
+Experimental Forest: 1999-Present ver 22. Environmental Data Initiative.
 <https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14>
 (Accessed 2021-11-05).
