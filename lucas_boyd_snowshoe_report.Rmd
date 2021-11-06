@@ -59,9 +59,20 @@ ggplot(data = hares_by_year, aes(x = year, y = n)) +
   scale_x_discrete(limit = c(1999:2012)) + # manually putting ticks for x axis
   theme_grey()
 ```
-**Fig. 1** shows total the total number of juvenile snowshoe hares trapped and observed each year across all sites. 
 
-As can be seen in this graph, number of juvenile trappings were not consistent from year to year. The greatest number trapped was `r hares_by_year_max` in 1999, the first year of the study. In 2002 and 2009, there were `r `hares_by_year_min` juvenile observations collected. The mean number of hares trapped by year was `r hares_by_year_mean`. While this appears to show a downward trend in juvenile hare population, the trend could also be a result of less offort put into data collection. Going forward, researchers should be be consistent about how many traps are set out and how often they're checked to ensure accurate representations of snowshoe hare populations. 
+**Fig. 1** shows total the total number of juvenile snowshoe hares
+trapped and observed each year across all sites.
+
+As can be seen in this graph, number of juvenile trappings were not
+consistent from year to year. The greatest number trapped was
+`r hares_by_year_max` in 1999, the first year of the study. In 2002 and
+2009, there were
+`r`hares_by_year_min`juvenile observations collected. The mean number of hares trapped by year was`r
+hares_by_year_mean\`. While this appears to show a downward trend in
+juvenile hare population, the trend could also be a result of less
+offort put into data collection. Going forward, researchers should be be
+consistent about how many traps are set out and how often they're
+checked to ensure accurate representations of snowshoe hare populations.
 
 ### B. Weight comparison and descriptive statistics
 
@@ -86,13 +97,22 @@ theme(legend.position = "none") +
   
 ```
 
-**Fig. 2** compares the mean weight (g) of male and female juvenile snowshoe hares across the three collection sites. "NA" indicates that the sex was unspecified. 
+**Fig. 2** compares the mean weight (g) of male and female juvenile
+snowshoe hares across the three collection sites. "NA" indicates that
+the sex was unspecified.
 
-Across all three sites, male juvenile snowshoe hares had a higher mean weight (g) than females and juvenile hares with unspecified sex. Both mean female and mean male weight was the highest at site bonbs. This seems to show that juvenile male snowshoe hares tend to be larger than females. There were no observations with unspecified sex at this location. 
+Across all three sites, male juvenile snowshoe hares had a higher mean
+weight (g) than females and juvenile hares with unspecified sex. Both
+mean female and mean male weight was the highest at site bonbs. This
+seems to show that juvenile male snowshoe hares tend to be larger than
+females. There were no observations with unspecified sex at this
+location.
 
 ### C. Juvenile hare weight difference analysis
 
-**Table 1** Descriptive statistics (mean, standard deviation, sample size) of weight (g) of male and female juvenile snowshoe hares.
+**Table 1** Descriptive statistics (mean, standard deviation, sample
+size) of weight (g) of male and female juvenile snowshoe hares.
+
 ```{r}
 hares_sex_table <- hares %>% 
   filter(sex %in% c("Male", "Female")) %>%
@@ -144,11 +164,25 @@ weight_by_sex_t <- t.test(weight_male, weight_female)
 sex_weight_mean_difference = mean(weight_by_sex_t$estimate[1]) - 
   mean(weight_by_sex_t$estimate[2])
 
+# finding and storing standard deviations for results
+male_sd <- sd(weight_male)
+female_sd <- sd(weight_female)
+
 # finding and storing the effect size
 sex_weight_effect_size <- cohen.d(weight_male, weight_female, na.rm = TRUE)
 ```
 
-According to our results, on average males weigh `r round(sex_weight_mean_difference, 0)`g more than females, with mean weight of `r round(mean(weight_male), 0)`g and `r round(mean(weight_female), 0)`g respectively. This difference was determined to be significant (Welch's two sample t-test: t( `r round(weight_by_sex_t$parameter, 3)`) = `r round(weight_by_sex_t$statistic, 3)`, p = `r round(weight_by_sex_t$p.value, 3)`), and the effect size is small-moderate (cohens d = `r round(sex_weight_effect_size$estimate, 3)`.
+According to the results, juvenile male snowshoe hares (mean weight =
+`r round(mean(weight_male), 0)` +/- `r round(male_sd, 0)`g) weigh
+`r round(sex_weight_mean_difference, 0)`g more
+(`r round((sex_weight_mean_difference)/(mean(weight_male)+mean(weight_female)/2)*100, 2)`%)
+than females (mean weight = `r round(mean(weight_female), 0)` +/- `r round(female_sd, 0)`g). This
+difference was determined to be significant (Welch's two sample t-test:
+t( `r round(weight_by_sex_t$parameter, 3)`) =
+`r round(weight_by_sex_t$statistic, 3)`, p =
+`r round(weight_by_sex_t$p.value, 3)`), and the effect size is
+small-moderate (cohens d =
+`r round(sex_weight_effect_size$estimate, 3)`).
 
 ### D. Relationship between juvenile weight and hind foot length
 
@@ -177,7 +211,6 @@ hindft_weight_lm_eq <- extract_eq(model = hindft_weight_lm)
 pearsons_r <- cor.test(hares$hindft, hares$weight)
 ```
 
-
 ```{r, include = FALSE}
 # exploring the linear regression results
 summary(hindft_weight_lm)
@@ -185,9 +218,8 @@ plot(hindft_weight_lm)
 
 ```
 
-\*\*\*\*2-3 sentences on what's up with the lm \#\# 5. Summary
-## 5. Summary
-## 6. Citations
+\*\*\*\*2-3 sentences on what's up with the lm \#\# 5. Summary \#\# 5.
+Summary \#\# 6. Citations
 
 Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017.
 Snowshoe hare physical data in Bonanza Creek Experimental Forest:
