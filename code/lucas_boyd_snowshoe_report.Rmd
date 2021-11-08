@@ -38,7 +38,7 @@ this important keystone species.
 ## 2. Data and Analyses
 
 The
-data contains observations for 3197 hares across 5 different sites in
+data contains observations for 3197 hares across 3 different sites in
 the Tanana Valley between 1999 and 2012. Following exploratory data
 visualization, weights of male and female juvenile hares are compared
 using a two-sample t-test with a significance level of 0.05. Effect
@@ -55,11 +55,12 @@ hares <- read_csv(here("data", "bonanza_hares.csv")) %>%
   mutate(year = year(date)) %>%  # creating a new year column
   mutate(sex = case_when( # changing names of observations
     sex == "f" ~ "Female",
-    sex == "m" ~ "Male",)) %>% 
+    sex == "m" ~ "Male",
+    is.na(sex) ~ "Unspecified")) %>% 
   mutate(grid = case_when(
-    grid == "bonbs" ~ "BonBs", 
-    grid == "bonmat" ~ "BonMat",
-    grid == "bonrip" ~ "BonRip"
+    grid == "bonbs" ~ "Black Spruce", 
+    grid == "bonmat" ~ "Mature",
+    grid == "bonrip" ~ "Riparian"
   ))
 ```
 
@@ -77,7 +78,7 @@ hares_by_year_min <- min(hares_by_year$n)
 
 ```{r}
 ggplot(data = hares_by_year, aes(x = year, y = n)) + 
-  geom_col(fill = "cyan4", width = 1, color = "white") + # creating a bar graph of trap counts
+  geom_col(fill = "cyan4", width = 1, color = "white", alpha = 0.9) + # creating a bar graph of trap counts
   labs(x = "Year", y = "Total Juveniles Trapped") +
   scale_x_discrete(limit = c(1999:2012)) + # manually putting ticks for x axis
   theme_grey()
@@ -111,25 +112,24 @@ hares_weight_by_site_summary <- hares %>%
 # visualizing average hare weight by site and sex
 ggplot(data = hares_weight_by_site_summary, 
        aes(x = sex, y = mean_weight, fill = sex)) +
-  geom_col(width = 0.8) +
+  geom_col(width = 1, color = "white", alpha = 0.9) + # changing look
   facet_wrap(~ grid) + # faceting by site
   labs(x = "Sex", y = "Mean Weight (g)") +
 theme(legend.position = "none") +
   theme_grey() +
-  theme(legend.position = "None") # removing the legend
+  theme(legend.position = "None") + # removing the legend 
+scale_fill_manual(values = c("cyan4", "cyan3", "cadetblue1")) # manual colors
   
 ```
 
 **Fig. 2** compares the mean weight (g) of male and female juvenile
-snowshoe hares across the three collection sites. "NA" indicates that
-the sex was unspecified.
+snowshoe hares across the three collection sites (Black Spruce, Mature and Riparian) in Bonanza Forest. "Unspecified" indicates that there is no data for sex
 
 Across all three sites, male juvenile snowshoe hares had a higher mean
 weight (g) than females and juvenile hares with unspecified sex. Both
-mean female and mean male weight was the highest at site "BonBs". This
+mean female and mean male weight was the highest at Black Spruce. This
 seems to show that juvenile male snowshoe hares tend to be heavier than
-females. There were no observations with unspecified sex at site
-"BonBs".
+females. There were no observations with unspecified sex at Black Spruce.
 
 ### C. Juvenile hare weight difference analysis
 
