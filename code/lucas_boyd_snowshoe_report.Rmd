@@ -79,9 +79,9 @@ hares_by_year_min <- min(hares_by_year$n)
 ```{r}
 ggplot(data = hares_by_year, aes(x = year, y = n)) + 
   geom_col(fill = "cyan4", width = 1, color = "white", alpha = 0.9) + # creating a bar graph of trap counts
-  labs(x = "Year", y = "Total Juveniles Trapped") +
+  labs(x = "Year", y = "Juvenile Hares Trapped") +
   scale_x_discrete(limit = c(1999:2012)) + # manually putting ticks for x axis
-  theme_grey()
+  theme_grey(12)
 ```
 
 **Fig. 1** shows total the total number of juvenile snowshoe hares
@@ -116,10 +116,11 @@ ggplot(data = hares_weight_by_site_summary,
   facet_wrap(~ grid) + # faceting by site
   labs(x = "Sex", y = "Mean Weight (g)") +
 theme(legend.position = "none") +
-  theme_grey() +
+  theme_grey(12) +
+  theme(axis.text.x = element_text(size = 9), 
+        axis.text.y = element_text(size = 9)) +
   theme(legend.position = "None") + # removing the legend 
 scale_fill_manual(values = c("cyan4", "cyan3", "cadetblue1")) # manual colors
-  
 ```
 
 **Fig. 2** compares the mean weight (g) of male and female juvenile
@@ -217,7 +218,7 @@ small-moderate (cohens d =
 ggplot(data = hares, aes(x = hindft, y = weight)) +
   geom_jitter(color = "cyan4", size = 1.5) +
   labs(x = "Hind Foot Length (mm)", y = "Weight (g)") +
-  theme_grey()
+  theme_grey(12)
 ```
 
 **Fig. 3** examines the relationship between hind foot length (mm) and
